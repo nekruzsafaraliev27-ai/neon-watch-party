@@ -50,9 +50,21 @@ input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #46f5ff14}
 .videoCard{padding:12px}
 .videoHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 10px}
 .videoHead h2{font-size:13px;margin:0}
-.videoFrame{width:100%;aspect-ratio:16/9;background:#03040a;border:1px solid #2d3452;border-radius:14px;overflow:hidden;display:grid;place-items:center}
+.videoFrame{position:relative;width:100%;aspect-ratio:16/9;background:#03040a;border:1px solid #2d3452;border-radius:14px;overflow:hidden;display:grid;place-items:center}
 .videoFrame iframe,.videoFrame video{width:100%;height:100%;border:0;display:block}.videoFrame #ytPlayer{width:100%;height:100%;min-height:180px}
 .emptyVideo{text-align:center;padding:22px;color:var(--muted);font-size:12px}
+.roomCodeActions{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;margin:-8px 0 12px;border:1px solid #2b3454;border-radius:13px;background:#0c1020}
+.roomCodeText{font-size:11px;color:var(--muted);overflow-wrap:anywhere}
+.roomCodeActions .btn{padding:9px 11px;white-space:nowrap}
+.videoToolbar{display:flex;justify-content:flex-end;margin:0 0 8px}
+.videoToolbar .btn{padding:8px 11px;font-size:11px}
+.videoFrame.theaterMode{position:fixed;z-index:9999;inset:0;width:100vw;height:100dvh;max-height:none;aspect-ratio:auto;border:0;border-radius:0;background:#000;display:block}
+.videoFrame.theaterMode iframe,.videoFrame.theaterMode video,.videoFrame.theaterMode #ytPlayer{width:100%;height:100%;min-height:0}
+.videoFrame.theaterMode .emptyVideo{position:absolute;inset:0;display:grid;place-content:center;background:#000}
+.videoFrame.theaterMode .videoToast{position:absolute;z-index:10001;right:12px;top:calc(12px + env(safe-area-inset-top));max-width:min(78vw,360px);padding:9px 12px;border:1px solid #ffffff33;border-radius:12px;background:#080b16dd;color:#fff;font-size:12px;line-height:1.4;overflow-wrap:anywhere;box-shadow:0 5px 24px #0008;pointer-events:none}
+.videoFrame.theaterMode .videoToast strong{display:block;color:var(--cyan);font-size:11px;margin-bottom:2px}
+.videoFrame.theaterMode .theaterClose{position:absolute;z-index:10002;left:12px;top:calc(12px + env(safe-area-inset-top));border:1px solid #ffffff44;border-radius:999px;background:#111827dd;color:#fff;padding:8px 12px;font-size:12px}
+
 .videoControls{display:flex;gap:8px;margin-top:10px}
 .videoControls input{flex:1}
 .videoControls .btn{white-space:nowrap;padding:11px}
@@ -118,9 +130,11 @@ input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #46f5ff14}
       <div class="pill" id="roomStatus">● ROOM READY</div>
     </div>
 
+    <div id="roomCodeActions" class="roomCodeActions hide"><span class="roomCodeText" id="roomCodeText">ROOM CODE: —</span><button class="btn btnMain" id="copyRoomCodeBtn" type="button">Нусха кардани код</button></div>
     <section class="card videoCard">
       <div class="videoHead" id="videoHead"><h2>▣ ТАМОШОИ ЯКҶОЯ</h2><span class="roomSub">VIDEO ROOM</span></div>
-      <div class="videoFrame" id="videoFrame"><div class="emptyVideo">▶<br><br>Пайванди видео гузор<br>то тамошоро оғоз кунӣ</div></div>
+      <div class="videoToolbar"><button class="btn" id="theaterBtn" type="button">⛶ Калон кардан</button></div>
+      <div class="videoFrame" id="videoFrame"><div class="emptyVideo">▶<br><br>Пайванди видео гузор<br>то тамошоро оғоз кунӣ</div><div id="videoToast" class="videoToast hide"></div><button id="theaterClose" class="theaterClose hide" type="button">✕ Бастан</button></div>
       <div class="videoControls" id="hostVideoControls"><input id="videoUrl" type="url" placeholder="Пайванди YouTube ё MP4"><button class="btn btnMain" id="openVideo">Кушодан</button></div>
       <p class="note" id="hostVideoNote">Танҳо соҳиби утоқ пайванди видеоро мегузорад. Видео ва ҳолати Play/Pause ба иштирокчии дигар ҳамоҳанг мешаванд.</p>
     </section>
@@ -159,7 +173,28 @@ function addMessage(name,text,system=false){
  if(!system){const b=document.createElement("strong");b.textContent=name;p.appendChild(b);}
  const s=document.createElement("span");s.textContent=text;p.appendChild(s);
  $("messages").appendChild(p);$("messages").scrollTop=$("messages").scrollHeight;
+ if(!system)showVideoToast(name,text);
 }
+let videoToastTimer=null;
+function showVideoToast(name,text){
+ const frame=$("videoFrame"),toast=$("videoToast");
+ if(!frame||!toast||!frame.classList.contains("theaterMode"))return;
+ toast.innerHTML="";
+ const n=document.createElement("strong");n.textContent=name;
+ const t=document.createElement("span");t.textContent=text;
+ toast.append(n,t);toast.classList.remove("hide");
+ if(videoToastTimer)clearTimeout(videoToastTimer);
+ videoToastTimer=setTimeout(()=>toast.classList.add("hide"),5000);
+}
+function setTheaterMode(enabled){
+ const frame=$("videoFrame"),close=$("theaterClose"),toast=$("videoToast");
+ frame.classList.toggle("theaterMode",!!enabled);
+ close.classList.toggle("hide",!enabled);
+ if(!enabled){toast.classList.add("hide");if(videoToastTimer)clearTimeout(videoToastTimer);}
+}
+$("theaterBtn").addEventListener("click",()=>setTheaterMode(true));
+$("theaterClose").addEventListener("click",()=>setTheaterMode(false));
+document.addEventListener("keydown",e=>{if(e.key==="Escape")setTheaterMode(false);});
 async function ensureAuth(){if(auth.currentUser)return auth.currentUser;const result=await auth.signInAnonymously();return result.user;}
 function stopRoomListeners(){
  if(chatRef&&chatListener)chatRef.off("child_added",chatListener);
@@ -193,12 +228,14 @@ async function enterRoom(create){
    // The creator password is only used to validate the creation form; it is never stored in Firebase.
    $("hostPassword").value="";
   }
-  stopRoomListeners();roomRef=candidate;chatRef=roomRef.child("chat");videoRef=roomRef.child("video");
+  stopRoomListeners();roomRef=candidate;chatRef=roomRef.child("chat");videoRef=roomRef.child("video");startVideoHeartbeat();
   $("screen1").classList.remove("active");$("screen2").classList.add("active");
   $("roomTitle").textContent="Movie Night";$("roomSubtitle").textContent="ROOM CODE: "+currentRoom.toUpperCase();
   $("roomStatus").textContent="● CONNECTED";setBadge("● ROOM: "+currentRoom.toUpperCase());
   $("hostVideoControls").classList.toggle("hide",!isHost);
   $("hostVideoNote").classList.toggle("hide",!isHost);
+  $("roomCodeActions").classList.toggle("hide",!isHost);
+  $("roomCodeText").textContent="ROOM CODE: "+currentRoom.toUpperCase();
   $("videoHead").querySelector(".roomSub").textContent=isHost?"HOST CONTROLS":"LIVE VIDEO";
   $("messages").innerHTML="";
   addMessage("SYSTEM",create?"Утоқ сохта шуд. Кодро ба дӯстат фирист.":"Ба утоқ пайваст шудӣ.",true);
@@ -217,6 +254,12 @@ async function enterRoom(create){
   alert("Пайвастшавӣ ба Firebase нашуд: "+(err.message||err)+". Санҷ, ки Anonymous Authentication фаъол аст ва Realtime Database Rules иҷозат медиҳанд.");
  }
 }
+$("copyRoomCodeBtn").addEventListener("click",async()=>{
+ const code=currentRoom.toUpperCase();if(!code)return;
+ try{await navigator.clipboard.writeText(code);$("copyRoomCodeBtn").textContent="Код нусха шуд ✓";}
+ catch(e){window.prompt("Кодро нусха кун:",code);}
+ setTimeout(()=>{$("copyRoomCodeBtn").textContent="Нусха кардани код";},2200);
+});
 $("createRoom").addEventListener("click",()=>enterRoom(true));
 $("joinRoom").addEventListener("click",()=>enterRoom(false));
 $("backBtn").addEventListener("click",()=>{$("screen2").classList.remove("active");$("screen1").classList.add("active");setBadge("● READY TO CONNECT");});
@@ -232,7 +275,12 @@ function showVideoError(message,url){
  const box=document.createElement("div");box.className="emptyVideo";box.style.width="100%";
  const text=document.createElement("div");text.textContent=message;box.appendChild(text);
  if(url){const link=document.createElement("a");link.href=url;link.target="_blank";link.rel="noopener noreferrer";link.textContent="Видеоро дар YouTube кушо";link.style.display="inline-block";link.style.marginTop="12px";link.style.color="#46f5ff";link.style.textDecoration="underline";box.appendChild(link);}
- frame.appendChild(box);
+ frame.innerHTML="";frame.appendChild(box);restoreVideoOverlay();
+}
+function restoreVideoOverlay(){
+ const frame=$("videoFrame");
+ if(!$("videoToast")){const toast=document.createElement("div");toast.id="videoToast";toast.className="videoToast hide";frame.appendChild(toast);}
+ if(!$("theaterClose")){const close=document.createElement("button");close.id="theaterClose";close.className="theaterClose hide";close.type="button";close.textContent="✕ Бастан";close.addEventListener("click",()=>setTheaterMode(false));frame.appendChild(close);}
 }
 function createYTPlayer(){
  const holder=$("ytPlayer"),id=getYoutubeId(lastLoadedUrl);
@@ -267,7 +315,7 @@ function loadVideoLocally(url){
  if(id){
   if(ytPlayer&&ytPlayer.loadVideoById){try{ytPlayer.loadVideoById(id);return;}catch(e){console.warn(e);}}
   frame.innerHTML="";ytPlayer=null;
-  const div=document.createElement("div");div.id="ytPlayer";div.style.width="100%";div.style.height="100%";frame.appendChild(div);loadYouTubeApi();return;
+  const div=document.createElement("div");div.id="ytPlayer";div.style.width="100%";div.style.height="100%";frame.appendChild(div);restoreVideoOverlay();loadYouTubeApi();return;
  }
  if(/\.(mp4|webm|ogg)(\?.*)?$/i.test(url)){
   frame.innerHTML="";ytPlayer=null;
@@ -275,11 +323,11 @@ function loadVideoLocally(url){
   v.addEventListener("play",()=>{if(!applyingRemote)publishVideoState("play",v.currentTime);});
   v.addEventListener("pause",()=>{if(!applyingRemote)publishVideoState("pause",v.currentTime);});
   v.addEventListener("seeked",()=>{if(!applyingRemote)publishVideoState(v.paused?"pause":"play",v.currentTime);});
-  frame.appendChild(v);return;
+  frame.appendChild(v);restoreVideoOverlay();return;
  }
  showVideoError("Пайванд шинохта нашуд. Пайванди YouTube ё URL-и мустақими MP4/WEBM-ро истифода бар.",url);
 }
-async function publishVideoState(action,time){if(!isHost||applyingRemote||!videoRef)return;try{await videoRef.update({url:lastLoadedUrl,action,time:Number(time)||0,updatedBy:auth.currentUser?.uid||"",updatedAt:firebase.database.ServerValue.TIMESTAMP});}catch(e){console.warn("Video sync failed",e);}}
+async function publishVideoState(action,time){if(applyingRemote||!videoRef)return;try{await videoRef.update({url:lastLoadedUrl,action,time:Number(time)||0,updatedBy:auth.currentUser?.uid||"",updatedAt:firebase.database.ServerValue.TIMESTAMP});}catch(e){console.warn("Video sync failed",e);}}
 async function applyRemoteVideo(data){
  if(!data)return;
  const url=data.url||"";
@@ -306,11 +354,16 @@ $("openVideo").addEventListener("click",async()=>{
  if(videoRef){try{await videoRef.set({url,action:"pause",time:0,updatedBy:auth.currentUser?.uid||"",updatedAt:firebase.database.ServerValue.TIMESTAMP});}catch(e){alert("Видео ба утоқ фиристода нашуд. Firebase Rules-ро санҷ.");}}
 });
 // Periodically send current playback position while playing, so viewers can catch up.
-syncTimer=setInterval(()=>{
- if(!isHost||applyingRemote||!videoRef||!lastLoadedUrl)return;
- try{if(ytPlayer&&ytPlayer.getPlayerState&&ytPlayer.getPlayerState()===1)publishVideoState("play",ytPlayer.getCurrentTime()||0);
- else{const v=$("videoFrame").querySelector("video");if(v&&!v.paused)publishVideoState("play",v.currentTime||0);}}catch(e){}
-},5000);
+function startVideoHeartbeat(){
+ if(syncTimer)clearInterval(syncTimer);
+ syncTimer=setInterval(()=>{
+  if(!isHost||applyingRemote||!videoRef||!lastLoadedUrl)return;
+  try{
+   if(ytPlayer&&ytPlayer.getPlayerState&&ytPlayer.getPlayerState()===1)publishVideoState("play",ytPlayer.getCurrentTime()||0);
+   else{const v=$("videoFrame").querySelector("video");if(v&&!v.paused)publishVideoState("play",v.currentTime||0);}
+  }catch(e){}
+ },5000);
+}
 const q=new URLSearchParams(location.search).get("room");if(q){$("joinCode").value=q;}
 </script>
 </body>

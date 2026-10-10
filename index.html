@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="tg">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070811">
+<title>NEON WATCH PARTY</title>
+<style>
+:root{--bg:#070811;--panel:#101322;--panel2:#151a2e;--line:#292f4c;--cyan:#46f5ff;--violet:#9b6bff;--pink:#ff4bd8;--text:#f7f8ff;--muted:#9da5c4;--green:#76ffcb}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{background:radial-gradient(ellipse at 15% -5%,#172c54 0,transparent 38%),radial-gradient(ellipse at 100% 20%,#321344 0,transparent 33%),var(--bg)}
+button,input{font:inherit}button{cursor:pointer}
+.app{width:min(100%,760px);min-height:100dvh;margin:auto;padding:18px 16px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:1.8px;font-size:17px}
+.logoMark{width:36px;height:36px;display:grid;place-items:center;border:1px solid #46f5ff88;border-radius:12px;color:var(--cyan);box-shadow:0 0 18px #46f5ff25;background:#0d1827}
+.logo span{color:var(--cyan);text-shadow:0 0 18px #46f5ff6b}
+.live{font-size:11px;color:var(--green);border:1px solid #76ffcb50;background:#76ffcb0c;border-radius:99px;padding:7px 10px;white-space:nowrap}
+.screen{display:none;flex:1;animation:appear .28s ease}
+.screen.active{display:flex;flex-direction:column}
+@keyframes appear{from{opacity:.25;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.hero{text-align:center;padding:16px 8px 22px}
+.kicker{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);font-weight:800}
+h1{font-size:clamp(30px,8vw,46px);letter-spacing:-1.5px;line-height:1.04;margin:12px 0}
+.gradient{background:linear-gradient(100deg,var(--cyan),#a99aff 55%,var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.subtitle{font-size:14px;line-height:1.6;color:var(--muted);max-width:390px;margin:0 auto}
+.card{border:1px solid var(--line);border-radius:22px;background:linear-gradient(145deg,#15192beF,#0d1020f5);padding:18px;box-shadow:0 14px 45px #0005,inset 0 1px #ffffff08}
+.cardTitle{font-size:14px;font-weight:800;margin:0 0 14px;display:flex;align-items:center;gap:8px}
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:13px}
+label{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.4px}
+input{width:100%;min-width:0;border:1px solid #343b5d;border-radius:12px;padding:13px 12px;color:var(--text);background:#080b16;outline:none;font-size:14px}
+input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #46f5ff14}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{border:1px solid #3c4568;border-radius:13px;padding:13px 14px;color:var(--text);background:#171c30;font-size:13px;font-weight:800;transition:transform .15s,filter .15s}
+.btn:active{transform:scale(.98)}
+.btnMain{background:linear-gradient(105deg,#0e8998,#5c3bc0 65%,#a92c90);border:1px solid #7af8ff9c;box-shadow:0 0 22px #46f5ff1b}
+.btnFull{width:100%;margin-top:3px}
+.note{font-size:11px;color:var(--muted);line-height:1.5;margin:12px 2px 0}
+.featureRow{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}
+.feature{border:1px solid #252b45;border-radius:14px;padding:12px 7px;text-align:center;background:#0b0e1a}
+.feature b{display:block;font-size:18px;margin-bottom:4px}
+.feature span{font-size:10px;color:var(--muted)}
+.bottom{text-align:center;color:#69718f;font-size:10px;padding:18px 0 0}
+.roomHeader{display:flex;align-items:center;gap:10px;margin:2px 0 14px}
+.back{width:38px;height:38px;flex-shrink:0;border:1px solid var(--line);border-radius:12px;background:#111629;color:var(--text);font-size:19px}
+.roomName{font-weight:900;font-size:16px;min-width:0;overflow-wrap:anywhere}
+.roomSub{font-size:10px;color:var(--muted)}
+.pill{margin-left:auto;font-size:10px;color:var(--green);border:1px solid #76ffcb55;border-radius:99px;padding:6px 9px;white-space:nowrap}
+.videoCard{padding:12px}
+.videoHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 10px}
+.videoHead h2{font-size:13px;margin:0}
+.videoFrame{width:100%;aspect-ratio:16/9;background:#03040a;border:1px solid #2d3452;border-radius:14px;overflow:hidden;display:grid;place-items:center}
+.videoFrame iframe,.videoFrame video{width:100%;height:100%;border:0}
+.emptyVideo{text-align:center;padding:22px;color:var(--muted);font-size:12px}
+.videoControls{display:flex;gap:8px;margin-top:10px}
+.videoControls input{flex:1}
+.videoControls .btn{white-space:nowrap;padding:11px}
+.chatCard{margin-top:12px;display:flex;flex-direction:column;flex:1;min-height:220px}
+.chatTop{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.chatTop h2{font-size:13px;margin:0}
+.online{font-size:10px;color:var(--green)}
+.messages{height:165px;overflow-y:auto;background:#080b16;border:1px solid #242b46;border-radius:13px;padding:11px}
+.message{margin:0 0 10px;overflow-wrap:anywhere;font-size:12px;line-height:1.45}
+.message strong{color:var(--cyan);margin-right:5px}
+.message .time{font-size:9px;color:#747d9d;margin-left:5px}
+.message.system{color:var(--muted);font-size:11px}
+.sendRow{display:flex;gap:8px;margin-top:9px}
+.sendRow input{flex:1}
+.sendRow .btn{padding:10px 13px}
+.hide{display:none!important}
+@media(min-width:650px){.app{padding-top:24px}.hero{padding-top:30px}.card{padding:22px}.videoFrame{max-height:380px}}
+@media(max-height:720px){.hero{padding-top:4px;padding-bottom:14px}h1{font-size:32px}.subtitle{font-size:12px}.featureRow{margin-top:10px}.feature{padding:9px 5px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="logo"><div class="logoMark">✦</div><div>NEON <span>WATCH</span></div></div>
+    <div class="live" id="stateBadge">● READY TO CONNECT</div>
+  </header>
+
+  <main id="screen1" class="screen active">
+    <section class="hero">
+      <div class="kicker">Your private cinema</div>
+      <h1>Watch together.<br><span class="gradient">Miles apart.</span></h1>
+      <p class="subtitle">Утоқи хусусӣ созед, пайванди видео гузоред ва аз кишварҳои гуногун якҷоя тамошо кунед.</p>
+    </section>
+
+    <section class="card">
+      <h2 class="cardTitle"><span style="color:var(--cyan)">✧</span> УТОҚИ ТАМОШО</h2>
+      <div class="field"><label for="userName">НОМИ ТУ</label><input id="userName" maxlength="24" placeholder="Номатро навис"></div>
+      <div class="field"><label for="roomId">ROOM ID · РАМЗИ УТОҚ</label><input id="roomId" maxlength="36" placeholder="Масалан: night-2026"></div>
+      <div class="two">
+        <button class="btn btnMain" id="createRoom">＋ Сохтани утоқ</button>
+        <button class="btn" id="joinRoom">↗ Пайваст шудан</button>
+      </div>
+      <p class="note">Як нафар утоқ месозад ва Room ID-ро ба дӯсташ мефиристад. Дӯст бо ҳамон ID пайваст мешавад.</p>
+    </section>
+
+    <div class="featureRow">
+      <div class="feature"><b>▣</b><span>Видеои муштарак</span></div>
+      <div class="feature"><b>⌁</b><span>Чати зинда</span></div>
+      <div class="feature"><b>✧</b><span>Тарҳи неонӣ</span></div>
+    </div>
+    <div class="bottom">NEON WATCH PARTY · PRIVATE ROOM</div>
+  </main>
+
+  <main id="screen2" class="screen">
+    <div class="roomHeader">
+      <button class="back" id="backBtn" aria-label="Бозгашт">‹</button>
+      <div style="min-width:0"><div class="roomName" id="roomTitle">Movie Night</div><div class="roomSub" id="roomSubtitle">ROOM ID: —</div></div>
+      <div class="pill" id="roomStatus">● ROOM READY</div>
+    </div>
+
+    <section class="card videoCard">
+      <div class="videoHead"><h2>▣ ТАМОШОИ ЯКҶОЯ</h2><span class="roomSub">VIDEO ROOM</span></div>
+      <div class="videoFrame" id="videoFrame"><div class="emptyVideo">▶<br><br>Пайванди видео гузор<br>то тамошоро оғоз кунӣ</div></div>
+      <div class="videoControls"><input id="videoUrl" type="url" placeholder="Пайванди YouTube ё MP4"><button class="btn btnMain" id="openVideo">Кушодан</button></div>
+      <p class="note">YouTube ё пайванди мустақими MP4. На ҳамаи сайтҳо иҷозати намоиши видеоро дар дохили сайт медиҳанд.</p>
+    </section>
+
+    <section class="card chatCard">
+      <div class="chatTop"><h2>⌁ ЧАТИ ЗИНДА</h2><span class="online" id="onlineLabel">● ТУ ДАР УТОҚ ҲАСТӢ</span></div>
+      <div class="messages" id="messages" aria-live="polite"><p class="message system">Ба дӯстат пайванди утоқро фирист, то ӯ ҳам ворид шавад.</p></div>
+      <form class="sendRow" id="sendForm"><input id="chatInput" maxlength="400" autocomplete="off" placeholder="Паём навис..."><button class="btn btnMain" type="submit">➤</button></form>
+    </section>
+  </main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+let currentRoom="",currentName="Дӯст",roomCreated=false;
+function newRoom(){return "night-"+Math.random().toString(36).slice(2,7)}
+function addMessage(name,text,system=false){
+ const p=document.createElement("p");p.className="message"+(system?" system":"");
+ if(!system){const b=document.createElement("strong");b.textContent=name; p.appendChild(b);}
+ const s=document.createElement("span");s.textContent=text;p.appendChild(s);
+ $("messages").appendChild(p);$("messages").scrollTop=$("messages").scrollHeight;
+}
+function enterRoom(create){
+ currentName=$("userName").value.trim()||"Дӯст";
+ currentRoom=$("roomId").value.trim().replace(/[^a-zA-Z0-9_-]/g,"-");
+ if(create&&!currentRoom)currentRoom=newRoom();
+ if(!currentRoom){alert("Room ID-ро навис ё «Сохтани утоқ»-ро пахш кун.");return;}
+ $("roomId").value=currentRoom;
+ $("screen1").classList.remove("active");$("screen2").classList.add("active");
+ $("roomTitle").textContent="Movie Night";$("roomSubtitle").textContent="ROOM ID: "+currentRoom;
+ $("stateBadge").textContent="● ROOM: "+currentRoom;
+ $("messages").innerHTML="";
+ addMessage("SYSTEM",create?"Утоқ сохта шуд. Room ID-ро ба дӯстат фирист.":"Ту ба утоқ ворид шудӣ.",true);
+ if(create){const url=new URL(location.href);url.searchParams.set("room",currentRoom);addMessage("SYSTEM","Пайванди утоқ: "+url.href,true);}
+}
+$("createRoom").addEventListener("click",()=>{if(!$("roomId").value.trim())$("roomId").value=newRoom();enterRoom(true);});
+$("joinRoom").addEventListener("click",()=>enterRoom(false));
+$("backBtn").addEventListener("click",()=>{$("screen2").classList.remove("active");$("screen1").classList.add("active");$("stateBadge").textContent="● READY TO CONNECT";});
+$("sendForm").addEventListener("submit",e=>{e.preventDefault();const t=$("chatInput").value.trim();if(!t)return;addMessage(currentName,t);$("chatInput").value="";});
+function getYoutubeId(value){try{const u=new URL(value);if(u.hostname==="youtu.be"||u.hostname.endsWith(".youtu.be"))return u.pathname.slice(1);if(u.hostname.includes("youtube.com"))return u.searchParams.get("v")||u.pathname.split("/").filter(Boolean).pop();}catch(e){}return null;}
+$("openVideo").addEventListener("click",()=>{
+ const url=$("videoUrl").value.trim();if(!url){alert("Аввал пайванди видео гузор.");return;}
+ const id=getYoutubeId(url);const frame=$("videoFrame");frame.innerHTML="";
+ if(id){const f=document.createElement("iframe");f.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(id);f.title="YouTube video player";f.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";f.allowFullscreen=true;frame.appendChild(f);return;}
+ if(/\.(mp4|webm|ogg)(\?.*)?$/i.test(url)){const v=document.createElement("video");v.src=url;v.controls=true;v.playsInline=true;frame.appendChild(v);return;}
+ const msg=document.createElement("div");msg.className="emptyVideo";msg.textContent="Пайванд шинохта нашуд. YouTube ё URL-и мустақими MP4-ро истифода бар.";frame.appendChild(msg);
+});
+const q=new URLSearchParams(location.search).get("room");if(q)$("roomId").value=q;
+</script>
+</body>
+</html>

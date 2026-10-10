@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="tg">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080812">
+<title>NEON WATCH — Watch Party</title>
+<style>
+:root{--bg:#080812;--panel:#111222;--line:#292b49;--cyan:#52f5ff;--pink:#ff4bd8;--muted:#a7aac7;--text:#f4f5ff}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 10% 0%,#1a1640 0,transparent 35%),radial-gradient(circle at 100% 30%,#102e42 0,transparent 30%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+button,input{font:inherit}button{cursor:pointer}
+.wrap{width:min(1100px,100%);margin:auto;padding:22px 16px 50px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px}
+.brand{font-weight:900;letter-spacing:1.5px;font-size:20px}.brand span{color:var(--cyan);text-shadow:0 0 18px #52f5ff88}
+.status{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}.dot{width:8px;height:8px;border-radius:50%;background:#777;display:inline-block}.dot.on{background:#4dffad;box-shadow:0 0 10px #4dffad}
+.hero{margin:14px 0 22px}.eyebrow{color:var(--cyan);font-size:11px;letter-spacing:3px;text-transform:uppercase}.hero h1{font-size:clamp(30px,6vw,54px);line-height:1.02;margin:9px 0 12px;letter-spacing:-1.8px}.hero h1 em{font-style:normal;color:var(--cyan);text-shadow:0 0 28px #52f5ff55}.hero p{color:var(--muted);line-height:1.6;max-width:620px;margin:0}
+.layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);gap:16px;align-items:start}
+.panel{background:linear-gradient(145deg,#151629eF,#0e0f1ceF);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 12px 50px #0004}
+.panel h2{font-size:15px;margin:0 0 14px}.field{display:flex;flex-direction:column;gap:7px;margin-bottom:12px}.field label{font-size:12px;color:var(--muted)}input{min-width:0;width:100%;border:1px solid #343653;background:#090a16;color:var(--text);border-radius:11px;padding:12px 13px;outline:none}input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #52f5ff15}
+.row{display:flex;gap:9px}.row>*{flex:1;min-width:0}
+.btn{border:0;border-radius:11px;padding:12px 14px;font-weight:800;color:#070914;background:linear-gradient(100deg,var(--cyan),#9b8cff);box-shadow:0 0 22px #52f5ff20}.btn.secondary{background:#20223a;color:var(--text);border:1px solid #393c60;box-shadow:none}.btn.pink{background:linear-gradient(100deg,#ff4bd8,#a68cff)}.btn:disabled{opacity:.45;cursor:not-allowed}
+.note{font-size:11px;color:var(--muted);line-height:1.55;margin-top:9px}.roomline{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border:1px dashed #484a70;border-radius:12px;margin:12px 0}.roomline strong{letter-spacing:2px;color:var(--cyan);overflow-wrap:anywhere}.roomline button{padding:8px 10px;font-size:12px}
+.player{background:#03040a;border:1px solid #2a2b46;border-radius:15px;overflow:hidden;position:relative}.player video{display:block;width:100%;max-height:58vh;aspect-ratio:16/9;background:#03040a}.player-empty{aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;color:#7c80a5}.player-empty .symbol{font-size:42px;color:var(--cyan);text-shadow:0 0 28px #52f5ff;margin-bottom:9px}
+.playerfoot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 2px;color:var(--muted);font-size:11px}.pill{border:1px solid #3a3c5c;border-radius:999px;padding:5px 9px;color:#d8d9f2}
+.chat{display:flex;flex-direction:column;height:340px}.messages{flex:1;overflow:auto;display:flex;flex-direction:column;gap:10px;padding:4px 2px 12px}.msg{max-width:90%;align-self:flex-start;background:#20223b;border:1px solid #303252;padding:9px 11px;border-radius:12px 12px 12px 3px;overflow-wrap:anywhere;font-size:13px}.msg.mine{align-self:flex-end;background:#18383f;border-color:#23616a;border-radius:12px 12px 3px 12px}.msg small{display:block;color:#9da4c5;font-size:10px;margin-bottom:4px}.chatform{display:flex;gap:8px;border-top:1px solid var(--line);padding-top:12px}.chatform input{flex:1}.chatform button{padding:0 14px}
+.toast{min-height:18px;color:var(--cyan);font-size:12px;margin-top:9px}.footer{text-align:center;color:#727696;font-size:11px;margin-top:24px;line-height:1.6}
+@media(max-width:760px){.layout{grid-template-columns:1fr}.wrap{padding:17px 12px 35px}.panel{padding:14px}.hero h1{letter-spacing:-1px}.chat{height:300px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div class="brand">NEON <span>WATCH</span></div><div class="status"><i id="statusDot" class="dot"></i><span id="statusText">Пайваст нашудааст</span></div></header>
+<section class="hero"><div class="eyebrow">ONE ROOM · TWO SCREENS</div><h1>Кино якҷоя.<br><em>Ҳатто аз дур.</em></h1><p>Утоқ соз, пайванди видеоро гузор ва рамзро ба дӯстат фирист. Тамошо ва чат аз ду кишвар.</p></section>
+<div class="layout">
+<main>
+<section class="panel">
+<h2>🎬 Утоқи кино</h2>
+<div class="field"><label for="videoUrl">Пайванди мустақими видео (MP4 / WebM)</label><input id="videoUrl" type="url" placeholder="https://example.com/movie.mp4" autocomplete="url"></div>
+<div class="row"><button class="btn" id="createBtn">Сохтани утоқ</button><button class="btn secondary" id="loadBtn">Бор кардани видео</button></div>
+<div class="roomline"><div><div class="note" style="margin:0 0 4px">РАМЗИ УТОҚ</div><strong id="roomCode">———</strong></div><button class="btn secondary" id="copyBtn" disabled>Нусха</button></div>
+<div class="field"><label for="joinCode">Рамзи утоқи дӯстат</label><div class="row"><input id="joinCode" placeholder="Масалан A7K9Q2" maxlength="8" autocapitalize="characters"><button class="btn pink" id="joinBtn">Пайвастан</button></div></div>
+<div class="player" id="playerWrap"><div class="player-empty" id="playerEmpty"><div><div class="symbol">▷</div><strong>Утоқро соз ё ба утоқ пайваст шав</strong><div class="note">Пайванди мустақими видео лозим аст.</div></div></div><video id="video" controls playsinline preload="metadata" hidden></video></div>
+<div class="playerfoot"><span id="videoState">Видео интихоб нашудааст</span><span class="pill" id="syncState">SYNC: OFF</span></div>
+<div class="note">Ҳамоҳангсозӣ метавонад аз сабаби таъхири интернет чанд лаҳза дер шавад. Баъзе видеоҳо CORS ё маҳдудияти дастрасӣ доранд.</div>
+<div class="toast" id="roomToast" role="status"></div>
+</section>
+</main>
+<aside>
+<section class="panel">
+<h2>💬 Чати зинда</h2>
+<div class="chat"><div class="messages" id="messages"><div class="note">Пас аз пайвастан ба утоқ, паёмҳо дар ин ҷо пайдо мешаванд.</div></div><form class="chatform" id="chatForm"><input id="chatInput" maxlength="500" placeholder="Паём навис..." autocomplete="off" disabled><button class="btn" id="sendBtn" disabled>➤</button></form></div>
+</section>
+<section class="panel" style="margin-top:16px"><h2>🔒 Дар бораи махфият</h2><div class="note">Ҳар касе, ки рамзи утоқро медонад, метавонад ба он пайваст шавад. Рамзро танҳо ба дӯстат фирист. Ин намоиши ибтидоӣ аст; барои истифодаи васеъ қоидаҳои амниятӣ ва маҳдуд кардани дастрасиро такмил деҳ.</div></section>
+</aside>
+</div>
+<div class="footer">NEON WATCH · Барои видеоҳое истифода бар, ки ҳуқуқи тамошо ва мубодилаашонро дорӣ.<br>Сохташуда бо HTML, CSS, JavaScript ва Firebase.</div>
+</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, set, get, update, onValue, push, serverTimestamp, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+/* ҚАДАМИ МУҲИМ: ин объектро бо маълумоти лоиҳаи Firebase-и худ иваз кун. */
+const firebaseConfig = {
+  apiKey: "AIzaSyCMNnLSgXT6pTnv_FtXuhjg95w0Z-F0Mgs",
+  authDomain: "neon-watch-party.firebaseapp.com",
+  databaseURL: "https://neon-watch-party-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "neon-watch-party",
+  storageBucket: "neon-watch-party.firebasestorage.app",
+  messagingSenderId: "186166230784",
+  appId: "1:186166230784:web:d96092ccdba81dd9c7fde5",
+  measurementId: "G-60J3K68MSE"
+};
+
+const $ = id => document.getElementById(id);
+const video = $("video");
+let db, auth, user = null, room = null, stopRoomListener = null, stopChatListener = null;
+let applyingRemote = false, lastRemoteAction = 0, syncTimer = null, lastSentAt = 0;
+
+function toast(message){ $("roomToast").textContent = message; }
+function status(online, message){ $("statusDot").classList.toggle("on",online); $("statusText").textContent=message; }
+function validConfig(){ return firebaseConfig.apiKey.startsWith("AIza") && !firebaseConfig.projectId.startsWith("PASTE_"); }
+function randomCode(){ const chars="ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; let s=""; for(let i=0;i<6;i++) s+=chars[Math.floor(Math.random()*chars.length)]; return s; }
+function safeText(s){ return String(s ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function showRoom(code){ room=code; $("roomCode").textContent=code; $("copyBtn").disabled=false; $("joinCode").value=code; $("syncState").textContent="SYNC: ON"; $("chatInput").disabled=false; $("sendBtn").disabled=false; }
+function setVideoSource(url){
+  if(!/^https?:\/\//i.test(url)){toast("Пайванди дурусти https:// ё http:// ворид кун.");return false;}
+  video.hidden=false; $("playerEmpty").hidden=true; video.src=url; video.load(); $("videoState").textContent="Видео бор шуда истодааст…"; return true;
+}
+async function ensureReady(){
+  if(!validConfig()){toast("Аввал firebaseConfig-ро бо маълумоти Firebase пур кун.");return false;}
+  if(!db){const app=initializeApp(firebaseConfig); db=getDatabase(app); auth=getAuth(app);}
+  if(!user){try{const cred=await signInAnonymously(auth);user=cred.user;}catch(e){toast("Вуруд ба Firebase нашуд: "+e.message);return false;}}
+  return true;
+}
+async function leaveOldRoom(){if(stopRoomListener)stopRoomListener();if(stopChatListener)stopChatListener();stopRoomListener=stopChatListener=null;}
+function watchRoom(code){
+  leaveOldRoom(); showRoom(code);
+  stopRoomListener=onValue(ref(db,`rooms/${code}/playback`),snap=>{
+    const d=snap.val(); if(!d)return;
+    if(d.url && d.url!==video.src) setVideoSource(d.url);
+    if(typeof d.time==="number" && video.readyState>=1 && Math.abs(video.currentTime-d.time)>2.5){
+      applyingRemote=true; video.currentTime=d.time; setTimeout(()=>applyingRemote=false,350);
+    }
+    lastRemoteAction=d.updatedAt||0;
+    if(d.action==="play" && video.paused){applyingRemote=true;video.play().catch(()=>toast("Барои оғози видео дар телефони худ Play-ро пахш кун."));setTimeout(()=>applyingRemote=false,500);}
+    if(d.action==="pause" && !video.paused){applyingRemote=true;video.pause();setTimeout(()=>applyingRemote=false,350);}
+  });
+  stopChatListener=onValue(query(ref(db,`rooms/${code}/messages`),limitToLast(100)),snap=>{
+    const box=$("messages"); box.innerHTML="";
+    const values=snap.val()||{}; const entries=Object.entries(values).sort((a,b)=>(a[1].createdAt||0)-(b[1].createdAt||0));
+    if(!entries.length){box.innerHTML='<div class="note">Ҳоло паём нест. Аввалин паёмро навис!</div>';return;}
+    for(const [,m] of entries){const el=document.createElement("div");el.className="msg"+(m.uid===user?.uid?" mine":"");el.innerHTML=`<small>${safeText(m.name||"Дӯст")}</small>${safeText(m.text||"")}`;box.appendChild(el);}
+    box.scrollTop=box.scrollHeight;
+  });
+}
+async function sendPlayback(action){
+  if(!db||!room||!user||applyingRemote)return;
+  const now=Date.now(); if(now-lastSentAt<300)return; lastSentAt=now;
+  try{await set(ref(db,`rooms/${room}/playback`),{url:video.src||"",time:Number(video.currentTime)||0,action,updatedAt:now,by:user.uid});}catch(e){toast("Хатои ҳамоҳангсозӣ. Қоидаҳои Firebase-ро санҷ.");}
+}
+$("createBtn").addEventListener("click",async()=>{
+  if(!await ensureReady())return;
+  const url=$("videoUrl").value.trim(); if(!url){toast("Аввал пайванди видеоро ворид кун.");return;}
+  let code=randomCode(); try{
+    while((await get(ref(db,`rooms/${code}`))).exists()) code=randomCode();
+    await set(ref(db,`rooms/${code}`,{createdAt:serverTimestamp(),createdBy:user.uid,playback:{url,time:0,action:"pause",updatedAt:Date.now(),by:user.uid}}));
+    showRoom(code);setVideoSource(url);watchRoom(code);toast("Утоқ сохта шуд. Рамзро ба дӯстат фирист.");
+  }catch(e){toast("Утоқ сохта нашуд: "+e.message);}
+});
+$("loadBtn").addEventListener("click",async()=>{
+  const url=$("videoUrl").value.trim();if(!url){toast("Пайванди мустақими видеоро ворид кун.");return;}
+  if(setVideoSource(url)&&room&&await ensureReady()) await update(ref(db,`rooms/${room}/playback`),{url,time:0,action:"pause",updatedAt:Date.now(),by:user.uid});
+});
+$("joinBtn").addEventListener("click",async()=>{
+  if(!await ensureReady())return;
+  const code=$("joinCode").value.trim().toUpperCase();
+  if(!/^[A-HJ-NP-Z2-9]{6}$/.test(code)){toast("Рамз бояд аз 6 ҳарф ё рақам иборат бошад.");return;}
+  try{const snap=await get(ref(db,`rooms/${code}`));if(!snap.exists()){toast("Ин утоқ ёфт нашуд. Рамзро санҷ.");return;}
+    showRoom(code);watchRoom(code);const d=snap.val().playback;if(d?.url){$("videoUrl").value=d.url;setVideoSource(d.url);}toast("Ба утоқ пайваст шудӣ.");
+  }catch(e){toast("Пайваст нашуд: "+e.message);}
+});
+$("copyBtn").addEventListener("click",async()=>{
+  const text=`Ман туро ба NEON WATCH даъват мекунам! Рамзи утоқ: ${room}`;
+  try{await navigator.clipboard.writeText(text);toast("Рамзи утоқ нусха шуд.");}catch{toast(text);}
+});
+$("chatForm").addEventListener("submit",async e=>{
+  e.preventDefault();const text=$("chatInput").value.trim();if(!text||!room||!user)return;
+  try{await push(ref(db,`rooms/${room}/messages`),{uid:user.uid,name:"Дӯст",text,createdAt:Date.now()});$("chatInput").value="";}
+  catch(err){toast("Паём фиристода нашуд. Қоидаҳои Firebase-ро санҷ.");}
+});
+video.addEventListener("play",()=>sendPlayback("play"));
+video.addEventListener("pause",()=>sendPlayback("pause"));
+video.addEventListener("seeked",()=>{if(!applyingRemote)sendPlayback(video.paused?"pause":"play");});
+video.addEventListener("timeupdate",()=>{
+  if(applyingRemote||!room||!user||video.paused)return;
+  if(!syncTimer)syncTimer=setTimeout(()=>{syncTimer=null;sendPlayback("play");},4000);
+});
+video.addEventListener("loadedmetadata",()=>{$("videoState").textContent="Видео омода аст";});
+video.addEventListener("error",()=>{$("videoState").textContent="Видео кушода нашуд";toast("Ин пайванд шояд мустақими видео набошад ё дастрасӣ маҳдуд бошад.");});
+if(validConfig()){status(false,"Омодаи пайвастшавӣ");}else{status(false,"Firebase-ро танзим кун");toast("Барои фаъол кардани чат ва ҳамоҳангсозӣ лоиҳаи ройгони Firebase соз ва firebaseConfig-ро пур кун.");}
+</script>
+</body>
+</html>
